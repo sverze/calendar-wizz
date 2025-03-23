@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
@@ -15,6 +15,25 @@ export default function LoginPage({ initialView = "sign_in" }: LoginPageProps) {
   const supabase = createClientComponentClient();
   const router = useRouter();
   const [view, setView] = useState<"sign_in" | "sign_up">(initialView);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session) {
+        setIsAuthenticated(true);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [supabase]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push('/calendar');
+    }
+  }, [isAuthenticated, router]);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-4 bg-gradient-to-b from-white to-blue-50 dark:from-gray-900 dark:to-gray-800">
