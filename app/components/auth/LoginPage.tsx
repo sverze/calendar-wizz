@@ -80,7 +80,7 @@ export default function LoginPage({ initialView = "sign_in" }: LoginPageProps) {
               },
             }}
             providers={["google", "github"]}
-            redirectTo={`${window.location.origin}/auth/callback`}
+            redirectTo={typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : undefined}
           />
         </div>
 
